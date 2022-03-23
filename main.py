@@ -6,6 +6,7 @@ import random
 from replit import db
 from keep_alive import keep_alive
 
+
 client = discord.Client()
 
 sad_words = ["sad", "depressed", "unhappy", "angry", "miserable", "depressing"]
@@ -20,38 +21,6 @@ starter_encouragements = [
   "You are an amazing person!"
 ]
 
-if "responding" not in db.keys():
-  db["responding"] = True
-
-
-def get_quote():
-  response = requests.get("https://zenquotes.io/api/random")
-  json_data = json.loads(response.text)
-  quote = json_data[0]['q'] + " -" + json_data[0]['a']
-  return(quote)
-
-
-def get_insult():
-  response = requests.get("https://insult.mattbas.org/api/insult.json")
-  json_data = json.loads(response.text)
-  insult = json_data
-  return(insult)
-
-
-def update_encouragements(encouraging_message):
-  if "encouragements" in db.keys():
-    encouragements = db["encouragements"]
-    encouragements.append(encouraging_message)
-    db["encouragements"] = encouragements
-  else:
-    db["encouragements"] = [encouraging_message]
-
-def get_shibe():
-  response = requests.get("http://shibe.online/api/shibes?count=1&urls=true&httpsUrls=true")
-  json_data = json.loads(response.text)
-  shibe = json_data
-  return(shibe)
-
 @client.event
 async def on_ready():
   print('Logged in as {0.user}'.format(client))
@@ -61,14 +30,42 @@ async def on_message(message):
   if message.author == client.user:
     return
 
-  msg = message.content
+  def get_quote():
+    response = requests.get("https://zenquotes.io/api/random")
+    json_data = json.loads(response.text)
+    quote = json_data[0]['q'] + " -" + json_data[0]['a']
+    return (quote)
 
+
+  def get_insult():
+    response = requests.get("https://insult.mattbas.org/api/insult.json")
+    json_data = json.loads(response.text)
+    insult = json_data
+    return(insult)
+
+
+  def update_encouragements(encouraging_message):
+    if "encouragements" in db.keys():
+      encouragements = db["encouragements"]
+      encouragements.append(encouraging_message)
+      db["encouragements"] = encouragements
+    else:
+      db["encouragements"] = [encouraging_message]
+
+  def get_shibe():
+    response = requests.get("http://shibe.online/api/shibes?count=1&urls=true&httpsUrls=true")
+    json_data = json.loads(response.text)
+    shibe = json_data
+    return(shibe)
+       
+
+  msg = message.content
+    
   if msg.startswith('!inspire'):
     quote = get_quote()
-    await message.channel.send(quote)
+  await message.channel.send(quote)
 
-  if db["responding"]:
-    if any(word in message.content for word in sad_words):
+  if any(word in message.content for word in sad_words):
       await message.channel.send(random.choice(starter_encouragements))
 
   if msg.startswith("!new"):
@@ -101,13 +98,13 @@ async def on_message(message):
       await message.channel.send("Responding is off.")
 
   if msg.startswith("!status"):
-      await message.channel.send("We're at 120 lines of code now pog!!")
+    await message.channel.send("We're at"+ print(Counter)+ "lines of code now pog!!")
   
   if msg.startswith("!who are you"):
-      await message.channel.send("I am a simple bot with very less functions which searches for sad words and returns an encouraging message. Also i give cool inspirational thingies. :D")
+    await message.channel.send("I am a simple bot with very less functions which searches for sad words and returns an encouraging message. Also i give cool inspirational thingies. :D")
     
   if msg.startswith("!hello"):
-      await message.channel.send("Hello!!", mention_author=True)
+    await message.channel.send("Hello!!", mention_author=True)
 
   if msg.startswith("!insult"):
     insult = get_insult
@@ -127,7 +124,7 @@ async def on_message(message):
     await message.channel.delete()
 
   if msg.startswith("!test"):
-    await message.channel.send(discord.Guild.fetch_emojis(discord.Emojis))
+    await message.channel.send(guild.fetch_emojis())
     
 keep_alive()
 
